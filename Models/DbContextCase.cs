@@ -10,7 +10,7 @@ namespace AdaYazilim_Case.Models
         }
 
         public DbSet<Train> Trains { get; set; }
-        public DbSet<Wagon> Wagones { get; set; }
+        public DbSet<Vagon> Wagones { get; set; }
 
     }
 }

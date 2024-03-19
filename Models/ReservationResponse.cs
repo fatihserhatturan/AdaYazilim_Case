@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using AdaYazilim_Case.Controllers;
+using Newtonsoft.Json;
 
 namespace AdaYazilim_Case.Models
 {
     public class ReservationResponse
     {
-        [JsonProperty("RezervasyonYapilabilir")]
-        public bool IsReservationPossible { get; set; }
-
-        [JsonProperty("YerlesimAyrinti")]
-        public List<PlacementDetail> PlacementDetails { get; set; }
+        public bool RezervasyonYapilabilir { get; set; }
+        public List<ReservationDetail> YerlesimAyrinti { get; set; }
     }
 }

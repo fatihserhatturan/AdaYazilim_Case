@@ -78,3 +78,4 @@ C:\Users\fatti\Desktop\Yazlab2.0\AdaYazilim_Case\obj\Debug\net7.0\refint\AdaYazi
 C:\Users\fatti\Desktop\Yazlab2.0\AdaYazilim_Case\obj\Debug\net7.0\AdaYazilim_Case.pdb
 C:\Users\fatti\Desktop\Yazlab2.0\AdaYazilim_Case\obj\Debug\net7.0\AdaYazilim_Case.genruntimeconfig.cache
 C:\Users\fatti\Desktop\Yazlab2.0\AdaYazilim_Case\obj\Debug\net7.0\ref\AdaYazilim_Case.dll
+C:\Users\fatti\Desktop\Yazlab2.0\AdaYazilim_Case\obj\Debug\net7.0\AdaYazilim_Case.sourcelink.json

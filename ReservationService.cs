@@ -4,60 +4,37 @@ namespace AdaYazilim_Case
 {
     public class ReservationService
     {
-
-        private readonly DatabaseService _databaseService;
-
-        public ReservationService(DatabaseService databaseService)
+        public ReservationResponse MakeReservation(ReservationRequest request)
         {
-            _databaseService = databaseService;
-        }
-
-        public ReservationResponse MakeReservation(TrainReservationRequest request)
-        {
-            // Rezervasyon yapılabilir mi kontrol et
-            bool isReservationPossible = IsReservationPossible(request);
-
-            // Yanıt oluştur
-            ReservationResponse response = new ReservationResponse();
-            response.IsReservationPossible = isReservationPossible;
-            response.PlacementDetails = isReservationPossible ? PlacePassengers(request) : new List<PlacementDetail>();
-
-            return response;
-        }
-
-        private bool IsReservationPossible(TrainReservationRequest request)
-        {
-            // Tüm vagonlarda doluluk oranını kontrol et
-            foreach (var vagon in request.Train.Wagons)
+            if (request == null || request.Tren == null || request.Tren.Vagonlar == null || request.Tren.Vagonlar.Count == 0)
             {
-                double dolulukOrani = (double)vagon.OccupiedSeatCount / vagon.Capacity;
-                if (dolulukOrani >= 0.7)
-                    return false;
+                return new ReservationResponse { RezervasyonYapilabilir = false, YerlesimAyrinti = new List<ReservationDetail>() };
             }
 
-            return true;
-        }
+            List<ReservationDetail> yerlesimAyrinti = new List<ReservationDetail>();
 
-        private List<PlacementDetail> PlacePassengers(TrainReservationRequest request)
-        {
-            List<PlacementDetail> placementDetails = new List<PlacementDetail>();
-            int remainingPersonCount = request.ReservationPersonCount;
-
-            foreach (var vagon in request.Train.Wagons)
+            int kalanKisiSayisi = request.RezervasyonYapilacakKisiSayisi;
+            foreach (var vagon in request.Tren.Vagonlar.OrderBy(v => v.DoluKoltukAdet))
             {
-                int availableSeats = vagon.Capacity - vagon.OccupiedSeatCount;
-                if (availableSeats > 0 && (remainingPersonCount <= availableSeats || request.CanPeopleBePlacedInDifferentWagons))
+                if (kalanKisiSayisi == 0)
                 {
-                    int personsToPlace = Math.Min(remainingPersonCount, availableSeats);
-                    placementDetails.Add(new PlacementDetail { WagonName = vagon.Name, PersonCount = personsToPlace });
-                    remainingPersonCount -= personsToPlace;
+                    break; 
                 }
 
-                if (remainingPersonCount <= 0)
-                    break;
+                int bosKoltukSayisi = vagon.Kapasite - vagon.DoluKoltukAdet;
+                if (bosKoltukSayisi > 0 && (double)vagon.DoluKoltukAdet / vagon.Kapasite < 0.7)
+                {
+                    int kisiSayisiBuVagonaYerlestirilecek = kalanKisiSayisi > bosKoltukSayisi ? bosKoltukSayisi : kalanKisiSayisi;
+                    yerlesimAyrinti.Add(new ReservationDetail { VagonAdi = vagon.Ad, KisiSayisi = kisiSayisiBuVagonaYerlestirilecek });
+                    kalanKisiSayisi -= kisiSayisiBuVagonaYerlestirilecek;
+                }
             }
 
-            return placementDetails;
+            return new ReservationResponse
+            {
+                RezervasyonYapilabilir = kalanKisiSayisi == 0,
+                YerlesimAyrinti = yerlesimAyrinti
+            };
         }
     }
 }
